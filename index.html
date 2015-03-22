@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/site.css"/>
         <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/d3.js" charset="utf-8"></script>
         <script src="js/crossfilter.v1.min.js" charset="utf-8"></script>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
@@ -32,6 +33,21 @@
                 <div id="out_modal_price" class="col-md-12 rightcol"></div>
             </div> 
         </div>
+        <div id="wfpModal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <p id="modal-header-content"></p>
+                    </div>
+                    <div id="modal-body" class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
         <script src="js/foodprices.js"></script>
     </body>
 </html>
