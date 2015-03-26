@@ -7,6 +7,10 @@
     padding-right:10px;
 }
 
+#header {
+    height:80px;
+}
+
 .sparkline{
   fill: none;
   stroke-width:2px;
@@ -43,6 +47,10 @@
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+.axis {
+    font-size:11px;
 }
 
 .brush .extent {

@@ -43,15 +43,24 @@ function addCountriesToMap(results){
 }
 
 function initCountry(adm0_code,adm0_name){
-    
+    console.log(adm0_code);
+    makeEmbedURL(adm0_code,'','','','');
     if(embedded!=="true"){
-        $('#modal-header-content').html("<h4>"+adm0_name+" Product Price since 2013</h4><p>"+adm0_name+"</p>");
+        var targetHeader = '#modal-header-content';
         $('#modal-body').html("Loading...");       
         $("#wfpModal").modal('show');        
     } else {
+        var targetHeader = '#header';
         $('#map').hide();
         $('#charts').show();
+        $('#header').show();
     }
+    var html = "<h4>"+adm0_name+" Product Price since 2013</h4><p>";
+    if(embedded ==='true'){
+        html += '<a id="maplink" href="">Map</a> > ';
+    }
+    html +=adm0_name+"</p>";
+    $(targetHeader).html(html);
     getProductsByCountryID(adm0_code,adm0_name);
 }
 
@@ -95,7 +104,7 @@ function generateSparklines(results,adm0_code,adm0_name){
             if(data!==[]){
                 generateSparkline(curProd,curUnit,data,topMonth);
                 $('#product_' + e.cm_id + '_' + e.um_id).on("click",function(){
-                    getProductDataByCountryID(adm0_code,e.cm_id,e.um_id,adm0_name,e.cm_name,e.um_name);
+                    getProductDataByCountryID(adm0_code,e.cm_id,e.um_id,adm0_name,e.cm_name,e.um_name,'','');
                 });
             }
             data = [];
@@ -170,21 +179,31 @@ function crossfilterData(data){
 }
 
 function generateChartView(cf,adm0,prod,unit,adm0_code){
+    makeEmbedURL(adm0_code,prod,unit,'','');
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
     } else {
         var targetDiv = '#charts';
+        var targetHeader = '#header';
     }
     console.log("check");
     console.log(targetDiv);
     curLevel = "adm0";
+    console.log(cf);
     
     cf.byDate.filterAll();
     cf.byAdm1.filterAll(); 
     cf.byMkt.filterAll();    
     
-    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+adm0+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > ' + prod + '</p>');
+    
+    var html = '<h4>Price of ' + prod + ' per ' + unit + ' in '+adm0+'</h4><p>';
+    if(embedded ==='true'){
+        html += '<a id="maplink" href="">Map</a> > ';
+    }
+    html +='<a id="adm0link" href="">'+adm0+'</a> > ' + prod + '</p>';
+    $(targetHeader).html(html);
+    
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
     $('#adm0link').click(function(event){
         event.preventDefault();
@@ -196,14 +215,22 @@ function generateChartView(cf,adm0,prod,unit,adm0_code){
 }
 
 function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
+    makeEmbedURL(adm0_code,prod,unit,adm1,'');
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
+    } else {
+        var targetDiv = '#charts';
+        var targetHeader = '#header';
     }
     
     curLevel = "adm1";
-    
-    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+adm1+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > ' + adm1 + '</p>');
+    var html = '<h4>Price of ' + prod + ' per ' + unit + ' in '+adm1+'</h4><p>';
+    if(embedded ==='true'){
+        html += '<a id="maplink" href="">Map</a> > ';
+    }
+    html +='<a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > ' + adm1 + '</p>';
+    $(targetHeader).html(html);
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
     console.log(adm1);
     
@@ -226,14 +253,23 @@ function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
 }
 
 function generateMktChartView(cf,mkt,prod,unit,adm0,adm0_code,adm1){
+    makeEmbedURL(adm0_code,prod,unit,adm1,mkt);
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
+    } else {
+        var targetDiv = '#charts';
+        var targetHeader = '#header';
     }
     
     curLevel = "mkt";
     
-    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+mkt+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > <a id="adm1link" href="">' + adm1 + '</a> > ' + mkt + '</p>');
+    var html = '<h4>Price of ' + prod + ' per ' + unit + ' in '+mkt+'</h4><p>';
+    if(embedded ==='true'){
+        html += '<a id="maplink" href="">Map</a> > ';
+    }
+    html +='<a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > <a id="adm1link" href="">' + adm1 + '</a> > ' + mkt + '</p>';
+    $(targetHeader).html(html);
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
     
     $('#adm0link').click(function(event){
@@ -271,6 +307,7 @@ function getAVG(sum,count){
 //        }
         
     });
+    console.log(data);
     return data;    
 }
 
@@ -286,8 +323,8 @@ function generateTimeCharts(data,cf){
         y = d3.scale.linear().range([height, 0]),
         y2 = d3.scale.linear().range([height2, 0]);
 
-    var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(6),
-        xAxis2 = d3.svg.axis().scale(x2).orient("bottom").ticks(6),
+    var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(5),
+        xAxis2 = d3.svg.axis().scale(x2).orient("bottom").ticks(5),
         yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
 
     var brush = d3.svg.brush()
@@ -373,6 +410,12 @@ function generateTimeCharts(data,cf){
           .attr("y", -6)
           .attr("height", height2 + 7);
   
+    $('#main_chart').append('<a id="mainchartdownload" href="">Download Data</a>');
+    $('#mainchartdownload').click(function(event){
+        event.preventDefault();
+        downloadData(cf,brush.empty() ? x2.domain() : brush.extent());
+    });
+  
     function brushed() {
       x.domain(brush.empty() ? x2.domain() : brush.extent());
       focus.select(".area").attr("d", area);
@@ -380,8 +423,12 @@ function generateTimeCharts(data,cf){
     }      
 }
 
-function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
+function downloadData(cf,dateRange){
+    console.log(dateRange);
+}
 
+function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
+    console.log(data);
     var margin = {top: 10, right: 60, bottom: 60, left: 60},
         width = $("#drilldown_chart").width() - margin.left - margin.right,
         height =  130 - margin.top - margin.bottom;
@@ -423,7 +470,7 @@ function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
     svg.append("g")
         .attr("class", "y axis yaxis")
         .call(yAxis);    
-
+    console.log("check");
     svg.selectAll("rect")
             .data(data)
             .enter()
@@ -531,19 +578,29 @@ function getCountryIDs(){
     });     
 }
 
-function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_name){
+function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_name,adm1_name,mkt_name){
     var sql = 'SELECT adm1_id,adm1_name,mkt_id,mkt_name, cast(mp_month as double precision) as month_num, mp_year, mp_price FROM "'+datastoreID+'" where adm0_id='+adm0_code+' and cm_id='+cm_id+' and um_id='+um_id;
     console.log(sql);
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
-    
+    console.log(adm0_code);
+    console.log(cm_id);
+    console.log(um_id);
     $.ajax({
       type: 'POST',
       dataType: 'json',
       url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
-           var cf = crossfilterData(data.result.records);
-           generateChartView(cf,adm0_name,cm_name,um_name,adm0_code);
+          console.log(data);
+           var cf = crossfilterData(data.result.records); 
+           if(adm1_name===''){
+              generateChartView(cf,adm0_name,cm_name,um_name,adm0_code); 
+           } else if (mkt_name===''){
+              generateADMChartView(cf,adm1_name,cm_name,um_name,adm0_name,adm0_code);  
+           } else {
+               cf.byAdm1.filter(adm1_name);
+               generateMktChartView(cf,mkt_name,cm_name,um_name,adm0_name,adm0_code,adm1_name); 
+           }
       }
     });    
 }
@@ -565,6 +622,63 @@ function getProductsByCountryID(adm0_code,adm0_name){
     });     
 }
 
+function getNameParams(adm0,prod,unit,adm1,mkt){
+    
+    if(prod=='Not found' && unit =='Not found'){
+            var sql = 'SELECT distinct adm0_name FROM "'+datastoreID+'" where adm0_id='+adm0;
+            console.log(sql);
+            var data = encodeURIComponent(JSON.stringify({sql: sql}));
+
+            $.ajax({
+              type: 'POST',
+              dataType: 'json',
+              url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+              data: data,
+              success: function(data) {              
+                  initCountry(adm0,data.result.records[0].adm0_name);
+              }
+            });
+    }
+    if(prod!='Not found' && unit !='Not found'){
+        var sql = 'SELECT distinct adm0_name,cm_id,um_id FROM "'+datastoreID+'" where adm0_id='+adm0+' and cm_name=\''+prod+'\' and um_name=\''+unit+'\'';
+        console.log(sql);
+        var data = encodeURIComponent(JSON.stringify({sql: sql}));
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+            data: data,
+            success: function(data) {              
+                if(adm1=='Not found'){
+                    getProductDataByCountryID(adm0,data.result.records[0].cm_id,data.result.records[0].um_id,data.result.records[0].adm0_name,prod,unit,'','');            
+                }
+                if(adm1!='Not found'&&mkt=='Not found'){
+                    getProductDataByCountryID(adm0,data.result.records[0].cm_id,data.result.records[0].um_id,data.result.records[0].adm0_name,prod,unit,adm1,'');
+                }
+                if(adm1!='Not found'&&mkt!='Not found'){
+                    getProductDataByCountryID(adm0,data.result.records[0].cm_id,data.result.records[0].um_id,data.result.records[0].adm0_name,prod,unit,adm1,mkt);
+                }                
+            }
+        });        
+    }   
+}
+
+function makeEmbedURL(adm0,prod,unit,adm1,mkt){
+    if(prod==''){
+        console.log("?size=...&adm0"+adm0);
+    }
+    if(prod!=''&&adm1==''){
+        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit);
+    }
+    if(adm1!=''&&mkt==''){
+        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit+"&adm1="+adm1);
+    }
+    if(mkt!=''){
+        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit+"&adm1="+adm1+"&mkt="+mkt);
+    }    
+}
+
 function parseGet(val) {
     
     var result = "Not found",
@@ -581,8 +695,13 @@ function parseGet(val) {
 }
 
 function initembed(){
-    var size = (parseGet('size'));
-
+    var size = parseGet('size');
+    var prod = parseGet('prod');
+    var unit = parseGet('unit');
+    var adm0 = parseGet('adm0');
+    var adm1 = parseGet('adm1');
+    var mkt = parseGet('mkt');
+    
     if(size==='small'){
         $('#map').width(500);
         $('#charts').width(500); 
@@ -597,6 +716,12 @@ function initembed(){
     }
     $('#charts').hide();
     $('#chart').height(500);
+    if(adm0!=='Not found'){
+        $('#map').hide();
+        $('#charts').show();
+        $('#header').show();        
+        getNameParams(adm0,prod,unit,adm1,mkt);
+    }
 }
 
 var datastoreID = "1b3eca3a-a3e6-417c-8d54-2f67047cf1a9";
