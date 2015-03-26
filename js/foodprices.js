@@ -24,6 +24,8 @@ function addCountriesToMap(results){
         weight:1
     };
     
+    var world = topojson.feature(un_world, un_world.objects.un_world);
+
     for(i = world.features.length-1; i >= 0; i--){
         if( $.inArray(world.features[i].properties.ADM0_CODE, results) === -1 ){
             world.features.splice(i, 1);
@@ -40,20 +42,25 @@ function addCountriesToMap(results){
     }).addTo(map);    
 }
 
-function initCountry(adm0_code,adm0_name,embedded){
+function initCountry(adm0_code,adm0_name){
     
     if(embedded!=="true"){
-        $('#modal-header-content').html("<h4>"+adm0_name+" Product Price since 2013</h4>");
+        $('#modal-header-content').html("<h4>"+adm0_name+" Product Price since 2013</h4><p>"+adm0_name+"</p>");
         $('#modal-body').html("Loading...");       
-        $("#wfpModal").modal('show');
-        getProductsByCountryID(adm0_code,adm0_name);
+        $("#wfpModal").modal('show');        
+    } else {
+        $('#map').hide();
+        $('#charts').show();
     }
+    getProductsByCountryID(adm0_code,adm0_name);
 }
 
 function generateSparklines(results,adm0_code,adm0_name){
     
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
+    } else {
+        var targetDiv = '#charts';
     }
     
     var numProd = 0;
@@ -141,20 +148,11 @@ function generateSparkline(prodID,unitID,data,topMonth){
     svg.append("path").attr("d", line(data)).attr("class", "sparkline");
 }
 
-function generateChartView(data,adm0,prod,unit){
-    if(embedded!=="true"){
-        var targetDiv = '#modal-body';
-        var targetHeader = '#modal-header-content';
-    }
-    
-    curLevel = "adm0";
-    
-    $(targetHeader).html("<h4>Price of " + prod + " per " + unit + " in "+adm0+"</h4>");
-    $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
+function crossfilterData(data){
     
     data.forEach(function(e){
         e.date = new Date(e.mp_year, e.month_num-1, 1);
-    });
+    });       
     
     var cf = crossfilter(data);
     
@@ -167,14 +165,37 @@ function generateChartView(data,adm0,prod,unit){
     cf.groupByAdm1Sum = cf.byAdm1.group().reduceSum(function(d) {return d.mp_price;});
     cf.groupByAdm1Count = cf.byAdm1.group();
     cf.groupByMktSum = cf.byMkt.group().reduceSum(function(d) {return d.mp_price;});
-    cf.groupByMktCount = cf.byMkt.group();    
+    cf.groupByMktCount = cf.byMkt.group(); 
+    return cf;
+}
+
+function generateChartView(cf,adm0,prod,unit,adm0_code){
+    if(embedded!=="true"){
+        var targetDiv = '#modal-body';
+        var targetHeader = '#modal-header-content';
+    } else {
+        var targetDiv = '#charts';
+    }
+    console.log("check");
+    console.log(targetDiv);
+    curLevel = "adm0";
     
+    cf.byDate.filterAll();
+    cf.byAdm1.filterAll(); 
+    cf.byMkt.filterAll();    
+    
+    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+adm0+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > ' + prod + '</p>');
+    $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
+    $('#adm0link').click(function(event){
+        event.preventDefault();
+        initCountry(adm0_code,adm0);
+    });
     generateTimeCharts(getAVG(cf.groupByDateSum.all(),cf.groupByDateCount.all()),cf);
-    generateBarChart(getAVG(cf.groupByAdm1Sum.all(),cf.groupByAdm1Count.all()),cf,prod,unit);
+    generateBarChart(getAVG(cf.groupByAdm1Sum.all(),cf.groupByAdm1Count.all()),cf,prod,unit,adm0,adm0_code);
 
 }
 
-function generateADMChartView(cf,adm1,prod,unit){
+function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
@@ -182,17 +203,29 @@ function generateADMChartView(cf,adm1,prod,unit){
     
     curLevel = "adm1";
     
-    $(targetHeader).html("<h4>Price of " + prod + " per " + unit + " in "+adm1+"</h4>");
+    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+adm1+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > ' + adm1 + '</p>');
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
     console.log(adm1);
+    
+    $('#adm0link').click(function(event){
+        event.preventDefault();
+        initCountry(adm0_code,adm0);
+    });
+    
+    $('#prodlink').click(function(event){
+        event.preventDefault();
+        generateChartView(cf,adm0,prod,unit,adm0_code);
+    });        
+    cf.byDate.filterAll();
+    cf.byMkt.filterAll();
     cf.byAdm1.filter(adm1);    
     
     generateTimeCharts(getAVG(cf.groupByDateSum.all(),cf.groupByDateCount.all()),cf);
-    generateBarChart(getAVG(cf.groupByMktSum.all(),cf.groupByMktCount.all()),cf,prod,unit);
+    generateBarChart(getAVG(cf.groupByMktSum.all(),cf.groupByMktCount.all()),cf,prod,unit,adm0,adm0_code,adm1);
 
 }
 
-function generateMktChartView(cf,mkt,prod,unit){
+function generateMktChartView(cf,mkt,prod,unit,adm0,adm0_code,adm1){
     if(embedded!=="true"){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
@@ -200,9 +233,25 @@ function generateMktChartView(cf,mkt,prod,unit){
     
     curLevel = "mkt";
     
-    $(targetHeader).html("<h4>Price of " + prod + " per " + unit + " in "+mkt+"</h4>");
+    $(targetHeader).html('<h4>Price of ' + prod + ' per ' + unit + ' in '+mkt+'</h4><p><a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > <a id="adm1link" href="">' + adm1 + '</a> > ' + mkt + '</p>');
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
-
+    
+    $('#adm0link').click(function(event){
+        event.preventDefault();
+        initCountry(adm0_code,adm0);
+    });
+    
+    $('#prodlink').click(function(event){
+        event.preventDefault();
+        generateChartView(cf,adm0,prod,unit,adm0_code);
+    });
+    
+    $('#adm1link').click(function(event){
+        event.preventDefault();
+        generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code);
+    });     
+    
+    cf.byDate.filterAll();
     cf.byMkt.filter(mkt);    
     
     generateTimeCharts(getAVG(cf.groupByDateSum.all(),cf.groupByDateCount.all()),cf);
@@ -216,6 +265,10 @@ function getAVG(sum,count){
             value = e.value/count[i].value;
             data.push({key:e.key,value:value});
         }
+//        else {
+//            value = 0;
+//            data.push({key:e.key,value:value});            
+//        }
         
     });
     return data;    
@@ -327,7 +380,7 @@ function generateTimeCharts(data,cf){
     }      
 }
 
-function generateBarChart(data,cf,prod,unit){
+function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
 
     var margin = {top: 10, right: 60, bottom: 60, left: 60},
         width = $("#drilldown_chart").width() - margin.left - margin.right,
@@ -358,7 +411,7 @@ function generateBarChart(data,cf,prod,unit){
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     svg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "x axis xaxis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
         .selectAll("text")  
@@ -385,8 +438,8 @@ function generateBarChart(data,cf,prod,unit){
             })
             .attr("class","bar")
             .on("click",function(d){
-                if(curLevel === "adm1"){generateMktChartView(cf,d.key,prod,unit);};
-                if(curLevel === "adm0"){generateADMChartView(cf,d.key,prod,unit);};
+                if(curLevel === "adm1"){generateMktChartView(cf,d.key,prod,unit,adm0,adm0_code,adm1);};
+                if(curLevel === "adm0"){generateADMChartView(cf,d.key,prod,unit,adm0,adm0_code);};
             });    
             
 }
@@ -402,19 +455,48 @@ function transitionBarChart(data){
         .rangeRoundBands([0, width]);
 
     var y = d3.scale.linear()
-        .range([0,height]); 
+        .range([0,height]);
 
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        .ticks(3);
     
     x.domain(data.map(function(d) {return d.key; }));
     y.domain([d3.max(data.map(function(d) { return d.value; })),0]);
     
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(3);    
+    
     d3.selectAll(".yaxis")
         .transition().duration(200)
-        .call(yAxis);   
+        .call(yAxis);
+
+    d3.selectAll(".xaxis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")  
+            .style("text-anchor", "start")
+            .attr("transform", function(d) {
+                return "rotate(35)"; 
+            });
+    var count = data.length;
+    
+    var svg = d3.select("#drilldown_chart").selectAll("rect")
+            .attr("x", function(d,i) { return x(d.key); })
+            .attr("width", x.rangeBand()-1)
+            .attr("y", function(d){
+                           return y(d.value);        
+            })
+            .attr("height", function(d,i) {
+                if(i>count){
+                            return 0;
+                } else {
+                            return height-y(d.value);
+                }
+            });      
     
     var svg = d3.select("#drilldown_chart").selectAll("rect").data(data)
         .transition().duration(200)  
@@ -460,7 +542,8 @@ function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_na
       url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
-           generateChartView(data.result.records,adm0_name,cm_name,um_name);
+           var cf = crossfilterData(data.result.records);
+           generateChartView(cf,adm0_name,cm_name,um_name,adm0_code);
       }
     });    
 }
@@ -497,8 +580,28 @@ function parseGet(val) {
     return result;
 }
 
+function initembed(){
+    var size = (parseGet('size'));
+
+    if(size==='small'){
+        $('#map').width(500);
+        $('#charts').width(500); 
+    }
+    if(size==='medium'){
+        $('#map').width(900);
+        $('#charts').width(900); 
+    }
+    if(size==='large'){
+        $('#map').width(1100);
+        $('#charts').width(1100); 
+    }
+    $('#charts').hide();
+    $('#chart').height(500);
+}
+
 var datastoreID = "1b3eca3a-a3e6-417c-8d54-2f67047cf1a9";
 var embedded = (parseGet("embedded"));
+if(embedded ==="true"){initembed();}
 
 var curLevel = "";
 

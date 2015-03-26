@@ -12,7 +12,9 @@
         <script src="js/crossfilter.v1.min.js" charset="utf-8"></script>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-        <script src="data/official_world.js"></script>  
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script src="data/un_world_topo.js"></script>
+        <script src="data/official_world.js"></script> 
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-46399763-1']);
@@ -29,8 +31,7 @@
         <div class="container">
             <div class="row">
                 <div id="map" class="col-md-12 rightcol"></div>
-                <div id="out_modal_country" class="col-md-12 rightcol"></div>
-                <div id="out_modal_price" class="col-md-12 rightcol"></div>
+                <div id="charts" class="col-md-12 rightcol"></div>
             </div> 
         </div>
         <div id="wfpModal" class="modal fade">
