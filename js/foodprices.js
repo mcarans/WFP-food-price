@@ -120,7 +120,7 @@ function generateSparklines(results,adm0_code,adm0_name){
 function generateSparkline(prodID,unitID,data,topMonth){
     
     var svg = d3.select("#product_"+prodID+"_"+unitID).append("svg").attr("width",$("#product_"+prodID+"_"+unitID).width()).attr("height", "50px");
-    var x = d3.scale.linear().domain([2013*12,topMonth]).range([0, 100]);
+    var x = d3.scale.linear().domain([2013*12,topMonth]).range([0, $("#product_"+prodID+"_"+unitID).width()]);
     //var y = d3.scale.linear().domain([d3.max(data,function(d){return d.y;}),d3.min(data,function(d){return d.y;})]).range([0, 50]);
     var y = d3.scale.linear().domain([d3.max(data,function(d){return d.y;})*1.1,0]).range([0, 50]);
 
@@ -566,7 +566,7 @@ function getCountryIDs(){
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
           var results = [];
@@ -588,7 +588,7 @@ function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_na
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
           console.log(data);
@@ -614,7 +614,7 @@ function getProductsByCountryID(adm0_code,adm0_name){
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
           generateSparklines(data.result.records,adm0_code,adm0_name);
@@ -632,7 +632,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
             $.ajax({
               type: 'POST',
               dataType: 'json',
-              url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+              url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
               data: data,
               success: function(data) {              
                   initCountry(adm0,data.result.records[0].adm0_name);
@@ -647,7 +647,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+            url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
             data: data,
             success: function(data) {              
                 if(adm1=='Not found'){
@@ -666,7 +666,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
 
 function makeEmbedURL(adm0,prod,unit,adm1,mkt){
     if(prod==''){
-        console.log("?size=...&adm0"+adm0);
+        console.log("?embedded=true&size=medium&adm0"+adm0);
     }
     if(prod!=''&&adm1==''){
         console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit);
@@ -724,7 +724,7 @@ function initembed(){
     }
 }
 
-var datastoreID = "1b3eca3a-a3e6-417c-8d54-2f67047cf1a9";
+var datastoreID = "eb966967-07c8-4a82-8742-b3867fe44b23";
 var embedded = (parseGet("embedded"));
 if(embedded ==="true"){initembed();}
 
