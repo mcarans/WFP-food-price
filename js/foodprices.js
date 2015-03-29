@@ -17,8 +17,8 @@ function initMap(){
 function addCountriesToMap(results){
     
     var world_style = {
-        color: "#fff",
-        fillColor: "#2a93fc",
+        color: '#fff',
+        fillColor: '#2a93fc',
         fillOpacity:0.8,
         opacity:0.8,
         weight:1
@@ -43,41 +43,46 @@ function addCountriesToMap(results){
 }
 
 function initCountry(adm0_code,adm0_name){
-    console.log(adm0_code);
+
     makeEmbedURL(adm0_code,'','','','');
-    if(embedded!=="true"){
+    if(embedded!=='true'){
         var targetHeader = '#modal-header-content';
-        $('#modal-body').html("Loading...");       
-        $("#wfpModal").modal('show');        
+        $('#modal-body').html('Loading...');       
+        $('#wfpModal').modal('show');        
     } else {
         var targetHeader = '#header';
         $('#map').hide();
         $('#charts').show();
         $('#header').show();
     }
-    var html = "<h4>"+adm0_name+" Product Price since 2013</h4><p>";
+    var html = '<h4>'+adm0_name+' Product Price since 2013</h4><p>';
     if(embedded ==='true'){
         html += '<a id="maplink" href="">Map</a> > ';
     }
-    html +=adm0_name+"</p>";
+    html +=adm0_name+'</p>';
     $(targetHeader).html(html);
+    $('#maplink').click(function(event){
+       event.preventDefault();
+       backToMap();
+    });
+    
     getProductsByCountryID(adm0_code,adm0_name);
 }
 
 function generateSparklines(results,adm0_code,adm0_name){
     
-    if(embedded!=="true"){
+    if(embedded!=='true'){
         var targetDiv = '#modal-body';
     } else {
         var targetDiv = '#charts';
     }
     
     var numProd = 0;
-    var curProd = "";
-    var curUnit = "";
+    var curProd = '';
+    var curUnit = '';
     var topMonth = 0;
     var html='<div class="row">';
-    console.log(results);
+
     results.forEach(function(e){
         if(e.mp_year*12+e.month_num*1>topMonth) {
             topMonth = e.mp_year*12+e.month_num*1;
@@ -92,18 +97,18 @@ function generateSparklines(results,adm0_code,adm0_name){
             html+='<div id="product_' + e.cm_id + '_' + e.um_id + '" class="productsparkline col-xs-3"><p>' + e.cm_name + ' per ' + e.um_name + '</p></div>';
         }
     });
-    console.log(topMonth);
-    html+="</div>";
+
+    html+='</div>';
     
     $(targetDiv).html(html);
-    var curProd = "";
-    var curUnit = "";
+    var curProd = '';
+    var curUnit = '';
     var data=[];
     results.forEach(function(e){
         if(e.cm_id!==curProd || e.um_id !==curUnit){
             if(data!==[]){
                 generateSparkline(curProd,curUnit,data,topMonth);
-                $('#product_' + e.cm_id + '_' + e.um_id).on("click",function(){
+                $('#product_' + e.cm_id + '_' + e.um_id).on('click',function(){
                     getProductDataByCountryID(adm0_code,e.cm_id,e.um_id,adm0_name,e.cm_name,e.um_name,'','');
                 });
             }
@@ -119,8 +124,8 @@ function generateSparklines(results,adm0_code,adm0_name){
 
 function generateSparkline(prodID,unitID,data,topMonth){
     
-    var svg = d3.select("#product_"+prodID+"_"+unitID).append("svg").attr("width",$("#product_"+prodID+"_"+unitID).width()).attr("height", "50px");
-    var x = d3.scale.linear().domain([2013*12,topMonth]).range([0, $("#product_"+prodID+"_"+unitID).width()]);
+    var svg = d3.select('#product_'+prodID+'_'+unitID).append('svg').attr('width',$('#product_'+prodID+'_'+unitID).width()).attr('height', '50px');
+    var x = d3.scale.linear().domain([2013*12,topMonth]).range([0, $('#product_'+prodID+'_'+unitID).width()]);
     //var y = d3.scale.linear().domain([d3.max(data,function(d){return d.y;}),d3.min(data,function(d){return d.y;})]).range([0, 50]);
     var y = d3.scale.linear().domain([d3.max(data,function(d){return d.y;})*1.1,0]).range([0, 50]);
 
@@ -150,11 +155,11 @@ function generateSparkline(prodID,unitID,data,topMonth){
                 x:(2013+i)*12,
                 y:50
             }];
-            svg.append("path").attr("d", yearLine(dataLine)).attr("class", "sparkyearline");
+            svg.append('path').attr('d', yearLine(dataLine)).attr('class', 'sparkyearline');
         }
     }
     
-    svg.append("path").attr("d", line(data)).attr("class", "sparkline");
+    svg.append('path').attr('d', line(data)).attr('class', 'sparkline');
 }
 
 function crossfilterData(data){
@@ -180,17 +185,15 @@ function crossfilterData(data){
 
 function generateChartView(cf,adm0,prod,unit,adm0_code){
     makeEmbedURL(adm0_code,prod,unit,'','');
-    if(embedded!=="true"){
+    if(embedded!=='true'){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
     } else {
         var targetDiv = '#charts';
         var targetHeader = '#header';
     }
-    console.log("check");
-    console.log(targetDiv);
-    curLevel = "adm0";
-    console.log(cf);
+
+    curLevel = 'adm0';
     
     cf.byDate.filterAll();
     cf.byAdm1.filterAll(); 
@@ -209,6 +212,10 @@ function generateChartView(cf,adm0,prod,unit,adm0_code){
         event.preventDefault();
         initCountry(adm0_code,adm0);
     });
+    $('#maplink').click(function(event){
+       event.preventDefault();
+       backToMap();
+    });    
     generateTimeCharts(getAVG(cf.groupByDateSum.all(),cf.groupByDateCount.all()),cf);
     generateBarChart(getAVG(cf.groupByAdm1Sum.all(),cf.groupByAdm1Count.all()),cf,prod,unit,adm0,adm0_code);
 
@@ -216,7 +223,7 @@ function generateChartView(cf,adm0,prod,unit,adm0_code){
 
 function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
     makeEmbedURL(adm0_code,prod,unit,adm1,'');
-    if(embedded!=="true"){
+    if(embedded!=='true'){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
     } else {
@@ -224,7 +231,7 @@ function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
         var targetHeader = '#header';
     }
     
-    curLevel = "adm1";
+    curLevel = 'adm1';
     var html = '<h4>Price of ' + prod + ' per ' + unit + ' in '+adm1+'</h4><p>';
     if(embedded ==='true'){
         html += '<a id="maplink" href="">Map</a> > ';
@@ -232,7 +239,6 @@ function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
     html +='<a id="adm0link" href="">'+adm0+'</a> > <a id="prodlink" href="">' + prod + '</a> > ' + adm1 + '</p>';
     $(targetHeader).html(html);
     $(targetDiv).html('<div class="row"><div id="nav_chart" class="col-xs-12"></div></div><div class="row"><div id="main_chart" class="col-xs-12"></div></div><div class="row"><div id="drilldown_chart" class="col-xs-12"></div></div>');
-    console.log(adm1);
     
     $('#adm0link').click(function(event){
         event.preventDefault();
@@ -242,7 +248,11 @@ function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
     $('#prodlink').click(function(event){
         event.preventDefault();
         generateChartView(cf,adm0,prod,unit,adm0_code);
-    });        
+    });
+    $('#maplink').click(function(event){
+       event.preventDefault();
+       backToMap();
+    });    
     cf.byDate.filterAll();
     cf.byMkt.filterAll();
     cf.byAdm1.filter(adm1);    
@@ -254,7 +264,7 @@ function generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code){
 
 function generateMktChartView(cf,mkt,prod,unit,adm0,adm0_code,adm1){
     makeEmbedURL(adm0_code,prod,unit,adm1,mkt);
-    if(embedded!=="true"){
+    if(embedded!=='true'){
         var targetDiv = '#modal-body';
         var targetHeader = '#modal-header-content';
     } else {
@@ -262,7 +272,7 @@ function generateMktChartView(cf,mkt,prod,unit,adm0,adm0_code,adm1){
         var targetHeader = '#header';
     }
     
-    curLevel = "mkt";
+    curLevel = 'mkt';
     
     var html = '<h4>Price of ' + prod + ' per ' + unit + ' in '+mkt+'</h4><p>';
     if(embedded ==='true'){
@@ -286,7 +296,10 @@ function generateMktChartView(cf,mkt,prod,unit,adm0,adm0_code,adm1){
         event.preventDefault();
         generateADMChartView(cf,adm1,prod,unit,adm0,adm0_code);
     });     
-    
+    $('#maplink').click(function(event){
+       event.preventDefault();
+       backToMap();
+    });    
     cf.byDate.filterAll();
     cf.byMkt.filter(mkt);    
     
@@ -301,17 +314,14 @@ function getAVG(sum,count){
             value = e.value/count[i].value;
             data.push({key:e.key,value:value});
         }
-//        else {
-//            value = 0;
-//            data.push({key:e.key,value:value});            
-//        }
-        
     });
-    console.log(data);
+
     return data;    
 }
 
 function generateTimeCharts(data,cf){
+    
+    $('#nav_chart').html('<p>Select a portion of the chart below to zoom in the data.</p>');
 
     var margin = {top: 10, right: 20, bottom: 20, left: 60},
         width = $('#nav_chart').width() - margin.left - margin.right,
@@ -410,10 +420,19 @@ function generateTimeCharts(data,cf){
           .attr("y", -6)
           .attr("height", height2 + 7);
   
+    main_chart.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 20)
+        .attr("x",-30)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Price in local currency");
+  
     $('#main_chart').append('<a id="mainchartdownload" href="">Download Data</a>');
     $('#mainchartdownload').click(function(event){
         event.preventDefault();
-        downloadData(cf,brush.empty() ? x2.domain() : brush.extent());
+        downloadData(data,'Date');
     });
   
     function brushed() {
@@ -423,12 +442,31 @@ function generateTimeCharts(data,cf){
     }      
 }
 
-function downloadData(cf,dateRange){
-    console.log(dateRange);
+function downloadData(data,name){
+    var csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += name+',Price\n';
+    var m_names = new Array('January', 'February', 'March', 
+    'April', 'May', 'June', 'July', 'August', 'September', 
+    'October', 'November', 'December');    
+    data.forEach(function(e, index){
+       if(name==='Date'){
+           var key = m_names[e.key.getMonth()] + '-' + e.key.getFullYear();
+       } else {
+           var key = e.key;
+       }
+           
+       var dataString = key+','+e.value;
+       csvContent += index < data.length ? dataString+ '\n' : dataString;
+    });
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'data.csv');
+    link.click();
 }
 
 function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
-    console.log(data);
+    $('#drilldown_chart').html('<p>Click a bar on the chart below to explore data for that area.</p>');
     var margin = {top: 10, right: 60, bottom: 60, left: 60},
         width = $("#drilldown_chart").width() - margin.left - margin.right,
         height =  130 - margin.top - margin.bottom;
@@ -469,8 +507,8 @@ function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
 
     svg.append("g")
         .attr("class", "y axis yaxis")
-        .call(yAxis);    
-    console.log("check");
+        .call(yAxis);
+
     svg.selectAll("rect")
             .data(data)
             .enter()
@@ -492,7 +530,6 @@ function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
 }
 
 function transitionBarChart(data){
-    console.log(data);
     
     var margin = {top: 10, right: 60, bottom: 60, left: 60},
         width = $("#drilldown_chart").width() - margin.left - margin.right,
@@ -557,8 +594,16 @@ function transitionBarChart(data){
             });  
                 
 }
+
+function backToMap(){
+        $('#header').html('<h3>WFP collected Food prices</h3><p>Click a country to explore prices for different products</p>');
+        $('#map').show();
+        map.invalidateSize();
+        $('#charts').hide(); 
+}
  
 function getCountryIDs(){
+    
     var sql = 'SELECT distinct adm0_id FROM "' + datastoreID + '"';
 
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
@@ -580,18 +625,16 @@ function getCountryIDs(){
 
 function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_name,adm1_name,mkt_name){
     var sql = 'SELECT adm1_id,adm1_name,mkt_id,mkt_name, cast(mp_month as double precision) as month_num, mp_year, mp_price FROM "'+datastoreID+'" where adm0_id='+adm0_code+' and cm_id='+cm_id+' and um_id='+um_id;
-    console.log(sql);
+
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
-    console.log(adm0_code);
-    console.log(cm_id);
-    console.log(um_id);
+
     $.ajax({
       type: 'POST',
       dataType: 'json',
       url: 'https://demo-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
-          console.log(data);
+
            var cf = crossfilterData(data.result.records); 
            if(adm1_name===''){
               generateChartView(cf,adm0_name,cm_name,um_name,adm0_code); 
@@ -608,7 +651,7 @@ function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_na
 function getProductsByCountryID(adm0_code,adm0_name){
     
     var sql = 'SELECT cm_id, cm_name, um_id, um_name, avg(cast(mp_month as double precision)) as month_num, mp_year, avg(mp_price) FROM "' + datastoreID + '" where adm0_id=' + adm0_code + ' and mp_year>2012 group by cm_id, cm_name, um_name, um_id, mp_month, mp_year order by cm_id, um_id, mp_year, month_num';    
-    console.log(sql);
+
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
     $.ajax({
@@ -626,7 +669,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
     
     if(prod=='Not found' && unit =='Not found'){
             var sql = 'SELECT distinct adm0_name FROM "'+datastoreID+'" where adm0_id='+adm0;
-            console.log(sql);
+
             var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
             $.ajax({
@@ -641,7 +684,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
     }
     if(prod!='Not found' && unit !='Not found'){
         var sql = 'SELECT distinct adm0_name,cm_id,um_id FROM "'+datastoreID+'" where adm0_id='+adm0+' and cm_name=\''+prod+'\' and um_name=\''+unit+'\'';
-        console.log(sql);
+
         var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
         $.ajax({
@@ -665,29 +708,51 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
 }
 
 function makeEmbedURL(adm0,prod,unit,adm1,mkt){
+    var embed='';
+
     if(prod==''){
-        console.log("?embedded=true&size=medium&adm0"+adm0);
+        embed = url+'?embedded=true&adm0='+adm0;
     }
     if(prod!=''&&adm1==''){
-        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit);
+        embed = url+'?embedded=true&adm0='+adm0+'&prod='+prod+'&unit='+unit;
     }
     if(adm1!=''&&mkt==''){
-        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit+"&adm1="+adm1);
+        embed = url+'?embedded=true&adm0='+adm0+'&prod='+prod+'&unit='+unit+'&adm1='+adm1;
     }
     if(mkt!=''){
-        console.log("?embedded=true&size=medium&adm0="+adm0+"&prod="+prod+"&unit="+unit+"&adm1="+adm1+"&mkt="+mkt);
-    }    
+        embed = url+'?embedded=true&adm0='+adm0+'&prod='+prod+'&unit='+unit+'&adm1='+adm1+'&mkt='+mkt;
+    }
+    var value = '<iframe src="'+embed+'&size=medium" width=900 height=600></iframe>';
+    var html = '<button id="embedbutton" class="btn btn-default">Embed</button><div id="embedoptions"><p>Choose a size and embed the code in your web page</p><p><input type="radio" name="sizewfpviz" value="small">Small <input type="radio" name="sizewfpviz" checked="checked" value="medium">Medium <input type="radio" name="sizewfpviz" value="large">Large</p><input id="embedtext" type="text" size="75" name="embed" value=\''+value+'\' readonly></div> <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+    $('#modal-footer').html(html);
+    $('#embedbutton').click(function(){
+        $('#embedbutton').hide();
+        $('#embedoptions').show();
+    });
+    $('input[type=radio][name=sizewfpviz]').change(function() {
+
+        if(this.value==='small'){
+            var value = '<iframe src="'+embed+'&size=small" width=500 height=600></iframe>';
+        }
+        if(this.value==='medium'){
+            var value = '<iframe src="'+embed+'&size=medium" width=900 height=600></iframe>';
+        }
+        if(this.value==='large'){
+            var value = '<iframe src="'+embed+'&size=large" width=1100 height=600></iframe>';
+        }        
+        $('#embedtext').val(value);
+    });    
 }
 
 function parseGet(val) {
     
-    var result = "Not found",
+    var result = 'Not found',
         tmp = [];
 
-    var items = location.search.substr(1).split("&");
+    var items = location.search.substr(1).split('&');
     
     for (var index = 0; index < items.length; index++) {
-        tmp = items[index].split("=");
+        tmp = items[index].split('=');
         if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
     }
     
@@ -703,16 +768,19 @@ function initembed(){
     var mkt = parseGet('mkt');
     
     if(size==='small'){
-        $('#map').width(500);
-        $('#charts').width(500); 
+        $('#map').width(470);
+        $('#map').height(485);
+        $('#charts').width(496); 
     }
     if(size==='medium'){
-        $('#map').width(900);
-        $('#charts').width(900); 
+        $('#map').width(750);
+        $('#map').height(485);
+        $('#charts').width(750); 
     }
     if(size==='large'){
-        $('#map').width(1100);
-        $('#charts').width(1100); 
+        $('#map').width(960);
+        $('#map').height(485);
+        $('#charts').width(960); 
     }
     $('#charts').hide();
     $('#chart').height(500);
@@ -724,11 +792,42 @@ function initembed(){
     }
 }
 
-var datastoreID = "eb966967-07c8-4a82-8742-b3867fe44b23";
-var embedded = (parseGet("embedded"));
-if(embedded ==="true"){initembed();}
+function initHDX(){
+    var embed='?embedded=true';
+    var value = '<iframe src="'+url+embed+'&size=medium" width=900 height=600></iframe>';
+    var html = '<button id="hdxembedbutton" class="btn btn-default">Embed</button><div id="hdxembedoptions"><p>Choose a size and embed the code in your web page</p><p><input type="radio" name="hdxsizewfpviz" value="small">Small <input type="radio" name="hdxsizewfpviz" checked="checked" value="medium">Medium <input type="radio" name="hdxsizewfpviz" value="large">Large</p><input id="hdxembedtext" type="text" size="75" name="embed" value=\''+value+'\' readonly></div>';
+    $('#hdxembed').show();
+    $('#hdxembed').html(html);
+    $('#hdxembedbutton').click(function(){
+        $('#hdxembedbutton').hide();
+        $('#hdxembedoptions').show();
+    });
+    $('input[type=radio][name=hdxsizewfpviz]').change(function() {
 
-var curLevel = "";
+        if(this.value==='small'){
+            var value = '<iframe src="'+url+embed+'&size=small" width=500 height=600></iframe>';
+        }
+        if(this.value==='medium'){
+            var value = '<iframe src="'+url+embed+'&size=medium" width=900 height=600></iframe>';
+        }
+        if(this.value==='large'){
+            var value = '<iframe src="'+url+embed+'&size=large" width=1100 height=600></iframe>';
+        }        
+        $('#hdxembedtext').val(value);
+    });     
+}
+
+var datastoreID = 'eb966967-07c8-4a82-8742-b3867fe44b23';
+var url = 'http://127.0.0.1:8000/index.html';
+
+var embedded = (parseGet('embedded'));
+if(embedded ==='true'){
+    initembed();
+} else {
+    initHDX();
+}
+
+var curLevel = '';
 
 var map = initMap();
 getCountryIDs();

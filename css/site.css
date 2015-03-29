@@ -62,3 +62,17 @@
 .bar {
     fill:#2a93fc;
 }
+
+.bar:hover {
+    cursor: pointer;
+}
+
+#embedoptions{
+    display:none;
+    padding:10px;
+}
+
+#hdxembedoptions{
+    display:none;
+    padding:10px;
+}
