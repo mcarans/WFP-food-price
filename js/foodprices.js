@@ -10,7 +10,9 @@ function initMap(){
         zoom: 2,
         layers: [base_osm]
     });
-
+    
+    map.scrollWheelZoom.disable();
+    
     return map;
 }
 
