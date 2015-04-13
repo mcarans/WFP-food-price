@@ -8,7 +8,7 @@
 }
 
 #header {
-    height:80px;
+    height:40px;
 }
 
 .sparkline{
@@ -79,4 +79,8 @@
 
 #hdxembed{
     padding-top: 15px;
+}
+
+.wfplabel{
+    font-size:11px;
 }
