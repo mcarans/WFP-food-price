@@ -638,13 +638,13 @@ function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
         .call(yAxis);
 
     var price = svg.append("g")
-         .attr("class", "pricelabel");
+         .attr("class", "barpricelabel");
          //.style("display", "none");
 
         price.append("text")
             .attr("dy", ".35em")
             .style("text-anchor", "middle")
-            .attr("class","wfplabel");
+            .attr("class","wfplabel")
 
     svg.selectAll("rect")
             .data(data)
@@ -659,10 +659,10 @@ function generateBarChart(data,cf,prod,unit,adm0,adm0_code,adm1){
                             return height-y(d.value);
             })
             .attr("class","bar")
-           .on("mouseover", function(d) {
+            .on("mouseover", function(d) {
                     price.style("display", null);
-                    price.attr("transform", "translate(" + (x(d.display)+(x.rangeBand()-1)/2) + "," + (y(d.value)-10) + ")");
                     var value = d.value<100 ? d.value.toPrecision(3) : Math.round(d.value);
+                    price.attr("transform", "translate(" + (x(d.display)+(x.rangeBand()-1)/2) + "," + (y(d.value)-10) + ")");
                     price.select("text").text(value);
             })
             .on("mouseout", function() { 
@@ -736,11 +736,18 @@ function transitionBarChart(data){
                 } else {
                             return height-y(d.value);
                 }
-            });      
+            }).on("mouseover", function(d) {
+                    var price = d3.select(".barpricelabel");
+                    price.style("display", null);
+                    var value = d.value<100 ? d.value.toPrecision(3) : Math.round(d.value);
+                    price.attr("transform", "translate(" + (x(d.display)+(x.rangeBand()-1)/2) + "," + (y(d.value)-10) + ")");
+                    price.select("text").text(value);
+            });
+            
     
     var svg = d3.select("#drilldown_chart").selectAll("rect").data(data)
         .transition().duration(200)  
-            .attr("x", function(d,i) { return x(d.key); })
+            .attr("x", function(d,i) { return x(d.display); })
             .attr("width", x.rangeBand()-1)
             .attr("y", function(d){
                            return y(d.value);        
