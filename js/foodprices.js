@@ -774,7 +774,7 @@ function getCountryIDs(){
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
           var results = [];
@@ -794,7 +794,7 @@ function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_na
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
 
@@ -820,7 +820,7 @@ function getProductsByCountryID(adm0_code,adm0_name){
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+      url: 'https://data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
       data: data,
       success: function(data) {
           generateSparklines(data.result.records,adm0_code,adm0_name);
@@ -838,7 +838,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
             $.ajax({
               type: 'POST',
               dataType: 'json',
-              url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+              url: 'https://data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
               data: data,
               success: function(data) {              
                   initCountry(adm0,data.result.records[0].adm0_name);
@@ -853,7 +853,7 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
         $.ajax({
             type: 'POST',
             dataType: 'json',
-            url: 'https://test-data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
+            url: 'https://data.hdx.rwlabs.org/api/3/action/datastore_search_sql',
             data: data,
             success: function(data) {              
                 if(adm1=='Not found'){
@@ -981,9 +981,8 @@ function initHDX(){
     });     
 }
 
-var datastoreID = '9e1eb333-333e-4a1f-acfe-f0b43ba73379';
+var datastoreID = 'b5b850a5-76da-4c33-a410-fd447deac042';
 var url = 'http://127.0.0.1:8000/index.html';
-
 var embedded = (parseGet('embedded'));
 if(embedded ==='true'){
     initembed();
