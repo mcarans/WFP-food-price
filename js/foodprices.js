@@ -731,7 +731,7 @@ function transitionBarChart(data){
                            return y(d.value);        
             })
             .attr("height", function(d,i) {
-                if(i>count){
+                if(i>=count){
                             return 0;
                 } else {
                             return height-y(d.value);
