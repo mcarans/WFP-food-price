@@ -774,8 +774,8 @@ function getCountryIDs(){
     $.ajax({
       type: 'GET',
       dataType: 'jsonp',
-      url: service_url,
-      data: data,
+      url: service_url+"?sql="+sql,
+      //data: data,
       success: function(data) {
           var results = [];
           data.result.records.forEach(function(e){
