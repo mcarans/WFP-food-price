@@ -792,10 +792,10 @@ function getProductDataByCountryID(adm0_code,cm_id,um_id,adm0_name,cm_name,um_na
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
     $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      url: service_url,
-      data: data,
+      type: 'GET',
+      dataType: 'jsonp',
+      url: service_url+"?sql="+sql,
+      //data: data,
       success: function(data) {
 
            var cf = crossfilterData(data.result.records); 
@@ -818,9 +818,9 @@ function getProductsByCountryID(adm0_code,adm0_name){
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
     $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      url: service_url,
+      type: 'GET',
+      dataType: 'jsonp',
+      url: service_url+"?sql="+sql,
       data: data,
       success: function(data) {
           generateSparklines(data.result.records,adm0_code,adm0_name);
@@ -836,9 +836,9 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
             var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
             $.ajax({
-              type: 'POST',
-              dataType: 'json',
-              url: service_url,
+              type: 'GET',
+              dataType: 'jsonp',
+              url: service_url+"?sql="+sql,
               data: data,
               success: function(data) {              
                   initCountry(adm0,data.result.records[0].adm0_name);
@@ -851,9 +851,9 @@ function getNameParams(adm0,prod,unit,adm1,mkt){
         var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
         $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: service_url,
+            type: 'GET',
+            dataType: 'jsonp',
+            url: service_url+"?sql="+sql,
             data: data,
             success: function(data) {              
                 if(adm1=='Not found'){
