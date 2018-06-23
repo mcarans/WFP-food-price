@@ -772,8 +772,8 @@ function getCountryIDs(){
     var data = encodeURIComponent(JSON.stringify({sql: sql}));
 
     $.ajax({
-      type: 'POST',
-      dataType: 'json',
+      type: 'GET',
+      dataType: 'jsonp',
       url: service_url,
       data: data,
       success: function(data) {
