@@ -978,7 +978,7 @@ function initHDX(){
           '<input type="radio" name="hdxsizewfpviz" checked="checked" value="medium">Medium</input>'+
           '<input type="radio" name="hdxsizewfpviz" value="large">Large</input>'+
        '</p>'+
-       '<input id="hdxembedtext" type="text" size="110" name="embed" value=\''+value+'\' readonly/>'+
+       '<input id="hdxembedtext" type="text" size="95" name="embed" value=\''+value+'\' readonly/>'+
        '</div>';
     $('#hdxembed').show();
     $('#hdxembed').html(html);
