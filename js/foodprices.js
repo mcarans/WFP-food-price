@@ -891,14 +891,14 @@ function makeEmbedURL(adm0,prod,unit,adm1,mkt){
     var value = '<iframe src="'+embed+'&size=medium" width=900 height=600></iframe>';
     var html = '<button id="embedbutton" class="btn btn-default">Embed</button>'+
                '<div id="embedoptions">'+
-                 '<p>xxxChoose a size and embed the code in your web page</p>'+
+                 '<p>Choose a size and embed the code in your web page</p>'+
                  '<p><input type="radio" name="sizewfpviz" value="small">Small</input>'+
                     '<input type="radio" name="sizewfpviz" checked="checked" value="medium">Medium</input>'+
                     '<input type="radio" name="sizewfpviz" value="large">Large</input>'+
                  '</p>'+
                  '<input id="embedtext" type="text" size="84" name="embed" value=\''+value+'\' readonly/>'+
-                 '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
-               '</div>';
+               '</div>'+
+               '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+;
     $('#modal-footer').html(html);
     $('#embedbutton').click(function(){
         $('#embedbutton').hide();
