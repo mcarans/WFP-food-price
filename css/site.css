@@ -75,10 +75,18 @@
 #hdxembedoptions{
     display:none;
     padding:10px;
+    border: #CCC;
+    border-style: double;
+    background-color: #FAFAFA;
 }
 
 #hdxembed{
-    padding-top: 15px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+#hdxembedtext{
+    font-size: smaller;
 }
 
 .wfplabel{

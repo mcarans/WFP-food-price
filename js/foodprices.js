@@ -889,7 +889,16 @@ function makeEmbedURL(adm0,prod,unit,adm1,mkt){
         embed = url+'?embedded=true&adm0='+adm0+'&prod='+prod+'&unit='+unit+'&adm1='+adm1+'&mkt='+mkt;
     }
     var value = '<iframe src="'+embed+'&size=medium" width=900 height=600></iframe>';
-    var html = '<button id="embedbutton" class="btn btn-default">Embed</button><div id="embedoptions"><p>Choose a size and embed the code in your web page</p><p><input type="radio" name="sizewfpviz" value="small">Small <input type="radio" name="sizewfpviz" checked="checked" value="medium">Medium <input type="radio" name="sizewfpviz" value="large">Large</p><input id="embedtext" type="text" size="75" name="embed" value=\''+value+'\' readonly></div> <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+    var html = '<button id="embedbutton" class="btn btn-default">Embed</button>'+
+               '<div id="embedoptions">'+
+                 '<p>xxxChoose a size and embed the code in your web page</p>'+
+                 '<p><input type="radio" name="sizewfpviz" value="small">Small</input>'+
+                    '<input type="radio" name="sizewfpviz" checked="checked" value="medium">Medium</input>'+
+                    '<input type="radio" name="sizewfpviz" value="large">Large</input>'+
+                 '</p>'+
+                 '<input id="embedtext" type="text" size="84" name="embed" value=\''+value+'\' readonly/>'+
+                 '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+               '</div>';
     $('#modal-footer').html(html);
     $('#embedbutton').click(function(){
         $('#embedbutton').hide();
@@ -962,7 +971,15 @@ function initembed(){
 function initHDX(){
     var embed='?embedded=true';
     var value = '<iframe src="'+url+embed+'&size=medium" width=900 height=600></iframe>';
-    var html = '<button id="hdxembedbutton" class="btn btn-default">Embed</button><div id="hdxembedoptions"><p>Choose a size and embed the code in your web page</p><p><input type="radio" name="hdxsizewfpviz" value="small">Small <input type="radio" name="hdxsizewfpviz" checked="checked" value="medium">Medium <input type="radio" name="hdxsizewfpviz" value="large">Large</p><input id="hdxembedtext" type="text" size="75" name="embed" value=\''+value+'\' readonly></div>';
+    var html = '<button id="hdxembedbutton" class="btn btn-default btn-sm pull-right">Embed</button>'+
+    '<div id="hdxembedoptions">'+
+      '<p>Choose a size and embed the code in your web page</p>'+
+      '<p><input type="radio" name="hdxsizewfpviz" value="small">Small</input>'+
+          '<input type="radio" name="hdxsizewfpviz" checked="checked" value="medium">Medium</input>'+
+          '<input type="radio" name="hdxsizewfpviz" value="large">Large</input>'+
+       '</p>'+
+       '<input id="hdxembedtext" type="text" size="110" name="embed" value=\''+value+'\' readonly/>'+
+       '</div>';
     $('#hdxembed').show();
     $('#hdxembed').html(html);
     $('#hdxembedbutton').click(function(){
