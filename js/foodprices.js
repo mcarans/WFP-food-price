@@ -898,7 +898,7 @@ function makeEmbedURL(adm0,prod,unit,adm1,mkt){
                  '</p>'+
                  '<input id="embedtext" type="text" size="84" name="embed" value=\''+value+'\' readonly/>'+
                '</div>'+
-               '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+;
+               '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
     $('#modal-footer').html(html);
     $('#embedbutton').click(function(){
         $('#embedbutton').hide();
