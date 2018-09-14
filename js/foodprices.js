@@ -1003,7 +1003,7 @@ function initHDX(){
 
 var datastoreID = 'Global Food Prices Database (WFP) - NEW';
 var url = 'https://orest-d.github.io/WFP-food-price/index.html';
-var service_url = 'https://test-data.humdata.org/api/3/action/datastore_search_sql'
+var service_url = 'https://feature-data.humdata.org/api/3/action/datastore_search_sql'
 var embedded = (parseGet('embedded'));
 if(embedded ==='true'){
     initembed();
