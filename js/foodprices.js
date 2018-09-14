@@ -1001,7 +1001,7 @@ function initHDX(){
     });     
 }
 
-var datastoreID = 'Global Food Prices Database (WFP) - NEW';
+var datastoreID = '23dcda73-b3df-424f-a3e3-2e52f1d0eef4';
 var url = 'https://orest-d.github.io/WFP-food-price/index.html';
 var service_url = 'https://feature-data.humdata.org/api/3/action/datastore_search_sql'
 var embedded = (parseGet('embedded'));
